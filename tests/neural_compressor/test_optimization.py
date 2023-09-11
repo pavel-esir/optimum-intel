@@ -182,7 +182,6 @@ class OptimizationTest(INCTestMixin):
         }
         quantization_config = PostTrainingQuantConfig(approach="weight_only", op_type_dict=op_type_dict)
         model = AutoModelForCausalLM.from_pretrained(model_name)
-        model.seqlen = 128
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         tokenizer.add_special_tokens({"pad_token": "[PAD]"})
         quantizer = INCQuantizer.from_pretrained(model, task="text-generation")
