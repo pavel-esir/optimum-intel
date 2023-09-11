@@ -25,7 +25,7 @@ from openvino.runtime import Core
 from transformers import PretrainedConfig
 from transformers.file_utils import add_start_docstrings
 
-from optimum.exporters.onnx import export
+from optimum.exporters.onnx import OnnxConfig, export
 from optimum.exporters.tasks import TasksManager
 from optimum.modeling_base import OptimizedModel
 
@@ -65,7 +65,6 @@ class PreTrainedModel(OptimizedModel):
     """,
 )
 class OVBaseModel(PreTrainedModel):
-    _AUTOMODELS_TO_TASKS = {cls_name: task for task, cls_name in TasksManager._TASKS_TO_AUTOMODELS.items()}
     auto_model_class = None
     export_feature = None
 
@@ -276,6 +275,31 @@ class OVBaseModel(PreTrainedModel):
         )
 
         onnx_config = onnx_config_class(model.config)
+
+        return cls._to_onnx_to_load(
+            model=model,
+            config=config,
+            onnx_config=onnx_config,
+            use_auth_token=use_auth_token,
+            revision=revision,
+            force_download=force_download,
+            cache_dir=cache_dir,
+            local_files_only=local_files_only,
+        )
+
+    @classmethod
+    def _to_onnx_to_load(
+        cls,
+        model: PreTrainedModel,
+        config: PretrainedConfig,
+        onnx_config: OnnxConfig,
+        use_auth_token: Optional[Union[bool, str]] = None,
+        revision: Optional[str] = None,
+        force_download: bool = False,
+        cache_dir: Optional[str] = None,
+        local_files_only: bool = False,
+        **kwargs,
+    ):
         save_dir = TemporaryDirectory()
         save_dir_path = Path(save_dir.name)
 
@@ -365,13 +389,6 @@ class OVBaseModel(PreTrainedModel):
 
     def forward(self, *args, **kwargs):
         raise NotImplementedError
-
-    @classmethod
-    def _auto_model_to_task(cls, auto_model_class):
-        """
-        Get the task corresponding to a class (for example AutoModelForXXX in transformers).
-        """
-        return cls._AUTOMODELS_TO_TASKS[auto_model_class.__name__]
 
     def can_generate(self) -> bool:
         """
