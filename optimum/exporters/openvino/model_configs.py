@@ -315,7 +315,6 @@ class QwenOpenVINOConfig(TextDecoderWithPositionIdsOnnxConfig):
     )
     DUMMY_INPUT_GENERATOR_CLASSES = (DummyTextInputGenerator, QwenDummyPastKeyValuesGenerator)
     DUMMY_PKV_GENERATOR_CLASS = QwenDummyPastKeyValuesGenerator
-    no_position_ids = False
 
     def generate_dummy_inputs(self, framework: str = "pt", **kwargs):
         dummy_inputs_generators = self._create_dummy_input_generator_classes(**kwargs)
