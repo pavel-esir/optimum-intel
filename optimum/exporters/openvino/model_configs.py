@@ -74,7 +74,7 @@ register_in_tasks_manager = TasksManager.create_register("openvino", overwrite_e
 
 
 @register_in_tasks_manager("baichuan", *["text-generation", "text-generation-with-past"], library_name="transformers")
-class BaichaunOpenVINOConfig(TextDecoderOnnxConfig):
+class BaichaunOpenVINOConfig(TextDecoderWithPositionIdsOnnxConfig):
     DEFAULT_ONNX_OPSET = 13
     NORMALIZED_CONFIG_CLASS = NormalizedTextConfig.with_args(
         num_layers="num_hidden_layers", num_attention_heads="num_attention_heads", hidden_size="hidden_size"
